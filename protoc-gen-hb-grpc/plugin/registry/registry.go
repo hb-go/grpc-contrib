@@ -1,11 +1,11 @@
-package hb_grpc
+package registry
 
 import (
 	"path"
 	"strconv"
 
 	pb "github.com/golang/protobuf/protoc-gen-go/descriptor"
-	"github.com/hb-go/grpc-contrib/protoc-gen/generator"
+	"github.com/hb-go/grpc-contrib/protoc-gen-hb-grpc/generator"
 )
 
 const (

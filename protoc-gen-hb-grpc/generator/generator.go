@@ -61,7 +61,7 @@ import (
 	"github.com/golang/protobuf/protoc-gen-go/descriptor"
 	plugin "github.com/golang/protobuf/protoc-gen-go/plugin"
 
-	"github.com/hb-go/grpc-contrib/protoc-gen/generator/internal/remap"
+	"github.com/hb-go/grpc-contrib/protoc-gen-hb-grpc/generator/internal/remap"
 )
 
 // generatedCodeVersion indicates a version of the generated code.
