@@ -16,7 +16,10 @@ import (
 	"github.com/hb-go/grpc-contrib/registry"
 )
 
-var deregisterCh = make(chan struct{})
+var (
+	deregisterCh   = make(chan struct{})
+	deregisterOnce = sync.Once{}
+)
 
 func init() {
 	mregistry.DefaultRegistry = consul.NewRegistry()
@@ -103,7 +106,10 @@ func (r *microRegistry) Deregister(sd *grpc.ServiceDesc, opts ...registry.Option
 		}
 	} else {
 		// 注销全部服务
-		close(deregisterCh)
+		deregisterOnce.Do(func() {
+			close(deregisterCh)
+		})
+
 		r.wg.Wait()
 	}
 }
