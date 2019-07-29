@@ -1,17 +1,18 @@
 package istio
 
 import (
+	"net"
+
 	"github.com/hb-go/grpc-contrib/registry"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/resolver"
-	"net"
 )
 
-type istioRegistry struct {
+func init() {
+	registry.DefaultRegistry = NewRegistry()
 }
 
-func NewRegistry() registry.Registry {
-	return &istioRegistry{}
+type istioRegistry struct {
 }
 
 // NewBuilder return resolver builder
@@ -43,4 +44,8 @@ func (r *istioRegistry) Register(sd *grpc.ServiceDesc, opts ...registry.Option) 
 
 // Deregister
 func (r *istioRegistry) Deregister(sd *grpc.ServiceDesc, opts ...registry.Option) {
+}
+
+func NewRegistry() registry.Registry {
+	return &istioRegistry{}
 }

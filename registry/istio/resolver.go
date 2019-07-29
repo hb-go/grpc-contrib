@@ -18,11 +18,6 @@ func init() {
 type istioBuilder struct {
 }
 
-// NewBuilder return resolver builder
-func newBuilder() resolver.Builder {
-	return &istioBuilder{}
-}
-
 // Scheme
 func (b *istioBuilder) Scheme() string {
 	return schema
@@ -42,4 +37,9 @@ func (b *istioBuilder) Build(target resolver.Target, cc resolver.ClientConn, opt
 	cc.UpdateState(resolver.State{Addresses: []resolver.Address{address}})
 
 	return nil, nil
+}
+
+// NewBuilder return resolver builder
+func newBuilder() resolver.Builder {
+	return &istioBuilder{}
 }

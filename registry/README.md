@@ -10,7 +10,10 @@
     
 
 ## 使用
-默认使用go-micro mdns注册服务
+
+> 默认mock未实现，需要`import` `_ github.com/hb-go/grpc-contrib/registry/micro`或`_ github.com/hb-go/grpc-contrib/registry/istio`
+
+`go-micro`默认使用`mdns`
 
 ```go
 // 服务注册与注销

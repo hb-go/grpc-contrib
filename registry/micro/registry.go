@@ -19,17 +19,11 @@ import (
 var deregisterCh = make(chan struct{})
 
 func init() {
-	// TODO Registry配置及初始化
+	registry.DefaultRegistry = NewRegistry()
 }
 
 type microRegistry struct {
 	wg *sync.WaitGroup
-}
-
-func NewRegistry() registry.Registry {
-	return &microRegistry{
-		wg: &sync.WaitGroup{},
-	}
 }
 
 // NewBuilder return resolver builder
@@ -144,4 +138,10 @@ func newMicroService(sd *grpc.ServiceDesc, options registry.Options) (*mregistry
 	}
 
 	return service, nil
+}
+
+func NewRegistry() registry.Registry {
+	return &microRegistry{
+		wg: &sync.WaitGroup{},
+	}
 }

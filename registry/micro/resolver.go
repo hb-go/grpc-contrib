@@ -53,13 +53,6 @@ type microResolver struct {
 	cc    resolver.ClientConn
 }
 
-// NewBuilder return resolver builder
-func newBuilder() resolver.Builder {
-	return &microBuilder{
-		resolvers: make(map[string]*service),
-	}
-}
-
 // Scheme
 func (b *microBuilder) Scheme() string {
 	return schema
@@ -295,5 +288,12 @@ func (s *service) update(res *registry.Result) error {
 		}
 	default:
 		return errors.New("un supported result action")
+	}
+}
+
+// NewBuilder return resolver builder
+func newBuilder() resolver.Builder {
+	return &microBuilder{
+		resolvers: make(map[string]*service),
 	}
 }

@@ -2,7 +2,6 @@ package registry
 
 import (
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/resolver"
 )
 
 var (
@@ -10,7 +9,6 @@ var (
 )
 
 type Registry interface {
-	NewBuilder() resolver.Builder
 	// 生成grpc.Dial target
 	NewTarget(sd *grpc.ServiceDesc, opts ...Option) string
 
@@ -23,10 +21,6 @@ type Registry interface {
 
 func NewTarget(sd *grpc.ServiceDesc, opts ...Option) string {
 	return DefaultRegistry.NewTarget(sd, opts...)
-}
-
-func NewBuilder() resolver.Builder {
-	return DefaultRegistry.NewBuilder()
 }
 
 func Register(sd *grpc.ServiceDesc, opts ...Option) error {
