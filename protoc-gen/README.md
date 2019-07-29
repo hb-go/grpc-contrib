@@ -1,11 +1,4 @@
-# gRPC Contrib
-
-## Gen proto
-```bash
-protoc --proto_path=.:$GOPATH/src --go_out=plugins=grpc:. proto/service.proto
-```
-
-## 使用`protoc-gen-hb-grpc`
+# protoc-gen-hb-grpc
 
 ```bash
 # Registry
