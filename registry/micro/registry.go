@@ -5,13 +5,13 @@ import (
 	"strings"
 	"sync"
 
+	mregistry "github.com/micro/go-micro/registry"
+	"github.com/micro/go-micro/registry/consul"
+	"github.com/micro/go-micro/util/addr"
+	mnet "github.com/micro/go-micro/util/net"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/grpclog"
 	"google.golang.org/grpc/resolver"
-
-	mregistry "github.com/micro/go-micro/registry"
-	"github.com/micro/go-micro/util/addr"
-	mnet "github.com/micro/go-micro/util/net"
 
 	"github.com/hb-go/grpc-contrib/registry"
 )
@@ -19,7 +19,9 @@ import (
 var deregisterCh = make(chan struct{})
 
 func init() {
+	mregistry.DefaultRegistry = consul.NewRegistry()
 	registry.DefaultRegistry = NewRegistry()
+
 }
 
 type microRegistry struct {

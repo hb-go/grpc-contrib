@@ -14,7 +14,7 @@ import (
 	"google.golang.org/grpc/resolver"
 )
 
-const schema = "go-micro"
+const schema = "micro"
 const watchLimit = 1.0
 const watchBurst = 3
 
