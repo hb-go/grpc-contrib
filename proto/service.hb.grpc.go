@@ -30,10 +30,15 @@ const _ = proto.ProtoPackageIsVersion3 // please upgrade the proto package
 // Reference imports to suppress errors if they are not otherwise used.
 var _ registry.Registry
 
-func RegisterExampleServiceRegistry(opts ...registry.Option) {
-	registry.Register(&_ExampleService_serviceDesc, opts...)
+// ExampleService registry
+func TargetExampleService(opts ...registry.Option) string {
+	return registry.NewTarget(&_ExampleService_serviceDesc, opts...)
 }
 
-func RegisterExaServiceRegistry(opts ...registry.Option) {
-	registry.Register(&_ExaService_serviceDesc, opts...)
+func RegisterExampleService(opts ...registry.Option) error {
+	return registry.Register(&_ExampleService_serviceDesc, opts...)
+}
+
+func DeregisterExampleService(opts ...registry.Option) {
+	registry.Deregister(&_ExampleService_serviceDesc, opts...)
 }

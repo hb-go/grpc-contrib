@@ -7,11 +7,6 @@ service ExampleService {
     }
 }
 
-service ExaService {
-    rpc Call (Request) returns (Response) {
-    }
-}
-
 message Request {
     string name = 1;
 }

@@ -83,8 +83,19 @@ func (g *grpcRegistry) GenerateImports(file *generator.FileDescriptor) {
 
 func (g *grpcRegistry) generateService(file *generator.FileDescriptor, service *pb.ServiceDescriptorProto, index int) {
 	g.P()
-	g.P("func Register" + service.GetName() + "Registry(opts ...registry.Option) {")
-	g.P("registry.Register(&_" + service.GetName() + "_serviceDesc, opts...)")
+	g.P("// " + service.GetName() + " registry")
+	g.P("func Target" + service.GetName() + "(opts ...registry.Option) string {")
+	g.P("return registry.NewTarget(&_" + service.GetName() + "_serviceDesc, opts...)")
 	g.P("}")
 	g.P()
+
+	g.P("func Register" + service.GetName() + "(opts ...registry.Option) error {")
+	g.P("return registry.Register(&_" + service.GetName() + "_serviceDesc, opts...)")
+	g.P("}")
+	g.P()
+	g.P("func Deregister" + service.GetName() + "(opts ...registry.Option) {")
+	g.P("registry.Deregister(&_" + service.GetName() + "_serviceDesc, opts...)")
+	g.P("}")
+	g.P()
+
 }

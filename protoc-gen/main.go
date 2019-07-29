@@ -36,7 +36,7 @@
 // That word 'hb-grpc' at the end becomes part of the option string set for the
 // protocol compiler, so once the protocol compiler (protoc) is installed
 // you can run
-// 	protoc --hb-grpc_out=output_directory --go_out=output_directory input_directory/file.proto
+// 	protoc --hb-grpc_out=plugins=registry:output_directory --go_out=output_directory input_directory/file.proto
 // to generate hb-grpc code for the protocol defined by file.proto.
 // With that input, the output will be written to
 // 	output_directory/file.hb.grpc.go
