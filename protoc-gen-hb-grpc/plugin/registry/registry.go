@@ -20,7 +20,7 @@ type grpcRegistry struct {
 	gen *generator.Generator
 }
 
-// Name returns the name of this plugin, "hb-grpc".
+// Name returns the name of this plugin, "registry".
 func (g *grpcRegistry) Name() string {
 	return "registry"
 }
@@ -30,25 +30,12 @@ func (g *grpcRegistry) Name() string {
 // if the name is used by other packages.
 var (
 	registryPkg string
-	pkgImports  map[generator.GoPackageName]bool
 )
 
 // Init initializes the plugin.
 func (g *grpcRegistry) Init(gen *generator.Generator) {
 	g.gen = gen
 	registryPkg = generator.RegisterUniquePackageName("registry", nil)
-}
-
-// Given a type name defined in a .proto, return its object.
-// Also record that we're using it, to guarantee the associated import.
-func (g *grpcRegistry) objectNamed(name string) generator.Object {
-	g.gen.RecordTypeUse(name)
-	return g.gen.ObjectNamed(name)
-}
-
-// Given a type name defined in a .proto, return its name as we will print it.
-func (g *grpcRegistry) typeName(str string) string {
-	return g.gen.TypeName(g.objectNamed(str))
 }
 
 // P forwards to g.gen.P.

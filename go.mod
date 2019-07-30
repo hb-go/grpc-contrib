@@ -5,7 +5,7 @@ go 1.12
 require (
 	github.com/golang/protobuf v1.3.2
 	github.com/hashicorp/golang-lru v0.5.3 // indirect
-	github.com/micro/go-micro v1.7.1-0.20190724203029-7ca8f8f0ab98
+	github.com/micro/go-micro v1.8.0
 	golang.org/x/net v0.0.0-20190724013045-ca1201d0de80 // indirect
 	golang.org/x/sys v0.0.0-20190726091711-fc99dfbffb4e // indirect
 	golang.org/x/time v0.0.0-20190308202827-9d24e82272b4

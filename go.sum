@@ -171,10 +171,10 @@ github.com/mattn/go-isatty v0.0.8/go.mod h1:Iq45c/XA43vh69/j3iqttzPXn0bhXyGjM0Hd
 github.com/mattn/go-runewidth v0.0.4/go.mod h1:LwmH8dsx7+W8Uxz3IHJYH5QSwggIsqBzpuz5H//U1FU=
 github.com/matttproud/golang_protobuf_extensions v1.0.1/go.mod h1:D8He9yQNgCq6Z5Ld7szi9bcBfOoFv/3dc6xSMkL2PC0=
 github.com/micro/cli v0.2.0/go.mod h1:jRT9gmfVKWSS6pkKcXQ8YhUyj6bzwxK8Fp5b0Y7qNnk=
-github.com/micro/go-micro v1.7.1-0.20190724203029-7ca8f8f0ab98 h1:n99uuhM5kq8UlwpkD4ZCpVz7QB+VkzlEq/5pSPUuJfQ=
-github.com/micro/go-micro v1.7.1-0.20190724203029-7ca8f8f0ab98/go.mod h1:wyjw4MrxhEdQ3kVLcyXklmYKV0HjYm9F2E1YNuORRl4=
-github.com/micro/mdns v0.1.0 h1:fuLybUsfynbigJmCot/54i+gwe0hpc/vtCMvWt2WfDI=
-github.com/micro/mdns v0.1.0/go.mod h1:KJ0dW7KmicXU2BV++qkLlmHYcVv7/hHnbtguSWt9Aoc=
+github.com/micro/go-micro v1.8.0 h1:4etDwf3DqP61cM0xrI+3OP+FlAsRUnM2rwBXFRTrl+Y=
+github.com/micro/go-micro v1.8.0/go.mod h1:RUJTXVb+qUnGx6jBK2yMCOzuB/xEKh/vdZc3uagM5TI=
+github.com/micro/mdns v0.1.1-0.20190729112526-ef68c9635478 h1:L6jnZZ763dMLlvst8P0dWHa1WbUu7ppUY1q3AY2hhIU=
+github.com/micro/mdns v0.1.1-0.20190729112526-ef68c9635478/go.mod h1:KJ0dW7KmicXU2BV++qkLlmHYcVv7/hHnbtguSWt9Aoc=
 github.com/miekg/dns v1.0.14/go.mod h1:W1PPwlIAgtquWBMBEV9nkV9Cazfe8ScdGz/Lj7v3Nrg=
 github.com/miekg/dns v1.1.3/go.mod h1:W1PPwlIAgtquWBMBEV9nkV9Cazfe8ScdGz/Lj7v3Nrg=
 github.com/miekg/dns v1.1.15 h1:CSSIDtllwGLMoA6zjdKnaE6Tx6eVUxQ29LUgGetiDCI=

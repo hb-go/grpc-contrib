@@ -24,6 +24,13 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.ProtoPackageIsVersion3 // please upgrade the proto package
 
+// Export service desc
+
+// ExampleService desc
+func ServiceDescExampleService() *grpc.ServiceDesc {
+	return &_ExampleService_serviceDesc
+}
+
 // gRPC Registry
 // github.com/hb-go/grpc-contrib/registry
 

@@ -55,6 +55,7 @@ import (
 	"github.com/golang/protobuf/proto"
 
 	"github.com/hb-go/grpc-contrib/protoc-gen-hb-grpc/generator"
+	_ "github.com/hb-go/grpc-contrib/protoc-gen-hb-grpc/plugin/desc"
 	_ "github.com/hb-go/grpc-contrib/protoc-gen-hb-grpc/plugin/registry"
 )
 
