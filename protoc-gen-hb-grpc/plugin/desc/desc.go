@@ -1,8 +1,16 @@
 package desc
 
 import (
+	"path"
+	"strconv"
+
 	pb "github.com/golang/protobuf/protoc-gen-go/descriptor"
+
 	"github.com/hb-go/grpc-contrib/protoc-gen-hb-grpc/generator"
+)
+
+const (
+	grpcPkgPath = "google.golang.org/grpc"
 )
 
 func init() {
@@ -22,12 +30,13 @@ func (g *exportDesc) Name() string {
 // They may vary from the final path component of the import path
 // if the name is used by other packages.
 var (
-	pkgImports map[generator.GoPackageName]bool
+	grpcPkg string
 )
 
 // Init initializes the plugin.
 func (g *exportDesc) Init(gen *generator.Generator) {
 	g.gen = gen
+	grpcPkg = generator.RegisterUniquePackageName("grpc", nil)
 }
 
 // P forwards to g.gen.P.
@@ -42,13 +51,26 @@ func (g *exportDesc) Generate(file *generator.FileDescriptor) {
 	g.P()
 	g.P("// Export service desc")
 
-	for i, service := range file.FileDescriptorProto.Service {
-		g.generateService(file, service, i)
+	if len(file.FileDescriptorProto.Service) > 0 {
+		for i, service := range file.FileDescriptorProto.Service {
+			g.generateService(file, service, i)
+		}
+	} else {
+		g.P()
+		g.P("// Reference imports to suppress errors if they are not otherwise used.")
+		g.P("var _ ", grpcPkg, ".Registry")
+		g.P()
 	}
 }
 
 func (g *exportDesc) GenerateImports(file *generator.FileDescriptor) {
-
+	if len(file.FileDescriptorProto.Service) == 0 {
+		return
+	}
+	g.P("import (")
+	g.P(grpcPkg, " ", strconv.Quote(path.Join(g.gen.ImportPrefix, grpcPkgPath)))
+	g.P(")")
+	g.P()
 }
 
 func (g *exportDesc) generateService(file *generator.FileDescriptor, service *pb.ServiceDescriptorProto, index int) {
@@ -57,4 +79,5 @@ func (g *exportDesc) generateService(file *generator.FileDescriptor, service *pb
 	g.P("func ServiceDesc" + service.GetName() + "() *grpc.ServiceDesc {")
 	g.P("return &_" + service.GetName() + "_serviceDesc")
 	g.P("}")
+	g.P()
 }

@@ -10,6 +10,10 @@ import (
 )
 
 import (
+	grpc "google.golang.org/grpc"
+)
+
+import (
 	registry "github.com/hb-go/grpc-contrib/registry"
 )
 
@@ -33,9 +37,6 @@ func ServiceDescExampleService() *grpc.ServiceDesc {
 
 // gRPC Registry
 // github.com/hb-go/grpc-contrib/registry
-
-// Reference imports to suppress errors if they are not otherwise used.
-var _ registry.Registry
 
 // ExampleService registry
 func TargetExampleService(opts ...registry.Option) string {

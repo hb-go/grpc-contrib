@@ -5,6 +5,7 @@ import (
 	"strconv"
 
 	pb "github.com/golang/protobuf/protoc-gen-go/descriptor"
+
 	"github.com/hb-go/grpc-contrib/protoc-gen-hb-grpc/generator"
 )
 
@@ -48,13 +49,16 @@ func (g *grpcRegistry) Generate(file *generator.FileDescriptor) {
 	}
 	g.P("// gRPC Registry")
 	g.P("// github.com/hb-go/grpc-contrib/registry")
-	g.P()
-	g.P("// Reference imports to suppress errors if they are not otherwise used.")
-	g.P("var _ ", registryPkg, ".Registry")
-	g.P()
 
-	for i, service := range file.FileDescriptorProto.Service {
-		g.generateService(file, service, i)
+	if len(file.FileDescriptorProto.Service) > 0 {
+		for i, service := range file.FileDescriptorProto.Service {
+			g.generateService(file, service, i)
+		}
+	} else {
+		g.P()
+		g.P("// Reference imports to suppress errors if they are not otherwise used.")
+		g.P("var _ ", registryPkg, ".Registry")
+		g.P()
 	}
 }
 
@@ -80,6 +84,7 @@ func (g *grpcRegistry) generateService(file *generator.FileDescriptor, service *
 	g.P("return registry.Register(&_" + service.GetName() + "_serviceDesc, opts...)")
 	g.P("}")
 	g.P()
+
 	g.P("func Deregister" + service.GetName() + "(opts ...registry.Option) {")
 	g.P("registry.Deregister(&_" + service.GetName() + "_serviceDesc, opts...)")
 	g.P("}")
