@@ -28,9 +28,7 @@ func (r *istioRegistry) NewTarget(sd *grpc.ServiceDesc, opts ...registry.Option)
 	}
 
 	addr := ""
-	if len(options.Addr) > 0 && options.Addr[:1] == ":" {
-		addr = options.Addr
-	} else if _, port, err := net.SplitHostPort(options.Addr); err == nil {
+	if _, port, err := net.SplitHostPort(options.Addr); err == nil && len(port) > 0 {
 		addr = ":" + port
 	}
 

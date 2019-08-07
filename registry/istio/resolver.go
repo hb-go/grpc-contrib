@@ -3,6 +3,7 @@ package istio
 import (
 	"errors"
 	"net"
+	"strings"
 
 	"google.golang.org/grpc/resolver"
 )
@@ -27,10 +28,12 @@ func (b *istioBuilder) Scheme() string {
 // target: {schema}://[authority]/{serviceName}:{port}
 // target使用query参数做version筛选
 func (b *istioBuilder) Build(target resolver.Target, cc resolver.ClientConn, opts resolver.BuildOption) (resolver.Resolver, error) {
-	if host, port, err := net.SplitHostPort(target.Endpoint); err != nil {
-		return nil, err
-	} else if host == "" || port == "" {
-		return nil, errors.New("host and port must be set. e.g. istio:///service-name:8080")
+	if c := strings.Count(target.Endpoint, ":"); c > 0 {
+		if host, _, err := net.SplitHostPort(target.Endpoint); err != nil {
+			return nil, err
+		} else if host == "" {
+			return nil, errors.New("host  must be set. e.g. istio:///service-name")
+		}
 	}
 
 	address := resolver.Address{Addr: target.Endpoint}
