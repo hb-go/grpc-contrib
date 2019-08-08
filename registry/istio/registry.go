@@ -2,6 +2,7 @@ package istio
 
 import (
 	"net"
+	"strings"
 
 	"github.com/hb-go/grpc-contrib/registry"
 	"google.golang.org/grpc"
@@ -27,12 +28,16 @@ func (r *istioRegistry) NewTarget(sd *grpc.ServiceDesc, opts ...registry.Option)
 		o(&options)
 	}
 
-	addr := ""
-	if _, port, err := net.SplitHostPort(options.Addr); err == nil && len(port) > 0 {
+	addr := sd.ServiceName
+	addr = strings.ToLower(addr)
+	addr = strings.Replace(addr, ".", "-", -1)
+	addr = strings.Replace(addr, "_", "-", -1)
+
+	if _, port, err := net.SplitHostPort(options.Addr); err == nil && port != "" {
 		addr = ":" + port
 	}
 
-	return schema + ":///" + sd.ServiceName + addr
+	return schema + ":///" + addr
 }
 
 // Register
