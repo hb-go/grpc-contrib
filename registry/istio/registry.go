@@ -34,7 +34,7 @@ func (r *istioRegistry) NewTarget(sd *grpc.ServiceDesc, opts ...registry.Option)
 	addr = strings.Replace(addr, "_", "-", -1)
 
 	if _, port, err := net.SplitHostPort(options.Addr); err == nil && port != "" {
-		addr = ":" + port
+		addr = addr + ":" + port
 	}
 
 	return schema + ":///" + addr
