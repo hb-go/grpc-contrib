@@ -76,8 +76,8 @@ func (g *exportDesc) GenerateImports(file *generator.FileDescriptor) {
 func (g *exportDesc) generateService(file *generator.FileDescriptor, service *pb.ServiceDescriptorProto, index int) {
 	g.P()
 	g.P("// " + service.GetName() + " desc")
-	g.P("func ServiceDesc" + service.GetName() + "() *grpc.ServiceDesc {")
-	g.P("return &_" + service.GetName() + "_serviceDesc")
+	g.P("func ServiceDesc" + service.GetName() + "() grpc.ServiceDesc {")
+	g.P("return _" + service.GetName() + "_serviceDesc")
 	g.P("}")
 	g.P()
 }
