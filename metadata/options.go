@@ -29,12 +29,12 @@ func WithHeader(header string) Option {
 	}
 }
 
-func WithPrefix(header string) Option {
+func WithPrefix(prefix string) Option {
 	return func(option *options) {
-		if _, ok := option.headers[header]; ok {
+		if _, ok := option.prefixes[prefix]; ok {
 			return
 		} else {
-			option.headers[header] = true
+			option.prefixes[prefix] = true
 		}
 	}
 }
