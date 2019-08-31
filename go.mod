@@ -5,6 +5,7 @@ go 1.12
 require (
 	github.com/golang/protobuf v1.3.2
 	github.com/grpc-ecosystem/go-grpc-middleware v1.0.0 // indirect
+	github.com/grpc-ecosystem/grpc-gateway v1.10.0 // indirect
 	github.com/hashicorp/golang-lru v0.5.3 // indirect
 	github.com/micro/go-micro v1.8.0
 	go.uber.org/atomic v1.4.0 // indirect
