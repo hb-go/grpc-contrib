@@ -6,7 +6,7 @@ import (
 	"sync"
 
 	mregistry "github.com/micro/go-micro/registry"
-	"github.com/micro/go-micro/registry/consul"
+	"github.com/micro/go-micro/registry/etcd"
 	"github.com/micro/go-micro/util/addr"
 	mnet "github.com/micro/go-micro/util/net"
 	"google.golang.org/grpc"
@@ -22,9 +22,8 @@ var (
 )
 
 func init() {
-	mregistry.DefaultRegistry = consul.NewRegistry()
+	mregistry.DefaultRegistry = etcd.NewRegistry()
 	registry.DefaultRegistry = NewRegistry()
-
 }
 
 type microRegistry struct {
