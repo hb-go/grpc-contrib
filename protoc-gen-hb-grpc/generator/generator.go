@@ -87,7 +87,7 @@ type Plugin interface {
 }
 
 var plugins []Plugin
-var genFileSuffix = ".hb.grpc.go"
+var genFileSuffix = ".pb.hb.grpc.go"
 
 // RegisterPlugin installs a (second-order) plugin to be run when the Go output is generated.
 // It is typically called during initialization.

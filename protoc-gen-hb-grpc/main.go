@@ -39,7 +39,7 @@
 // 	protoc --hb-grpc_out=plugins=registry:output_directory --go_out=output_directory input_directory/file.proto
 // to generate hb-grpc code for the protocol defined by file.proto.
 // With that input, the output will be written to
-// 	output_directory/file.hb.grpc.go
+// 	output_directory/file.pb.hb.grpc.go
 //
 // The generated code is documented in the package comment for
 // the library.
