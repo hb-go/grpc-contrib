@@ -1,5 +1,15 @@
 # gRPC Contrib
 
+## Features
+
+Path | 功能 | 说明
+----|----|----
+[client](client) | client 连接池 | -
+[log](log) | logger | `zap`
+[metadata](metadata) | 元数据转换与传递 | 支持 `client` 和 `gateway`插件
+[protoc-gen-hb-grpc](protoc-gen-hb-grpc) | 代码生成 | 1.私有 service desc 导出<br/> 2.Registry 服务发现相关代码生成
+[registry](registry) | 服务发现 | 支持 [go-micro/registry](https://github.com/micro/go-micro/tree/master/registry)，以及 istio(https://github.com/istio/istio) 环境
+  
 ## Gen proto
 ```bash
 protoc --proto_path=.:$GOPATH/src --go_out=plugins=grpc:. proto/service.proto
