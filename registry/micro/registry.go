@@ -42,11 +42,11 @@ func (r *microRegistry) NewTarget(sd *grpc.ServiceDesc, opts ...registry.Option)
 		o(&options)
 	}
 
-	if options.Version == "" {
+	if len(options.Versions) == 0 {
 		return schema + ":///" + sd.ServiceName
 	}
 
-	return schema + ":///" + sd.ServiceName + "?version=" + options.Version
+	return schema + ":///" + sd.ServiceName + "?version=" + strings.Join(options.Versions, "|")
 }
 
 // Register
@@ -138,9 +138,14 @@ func newMicroService(sd *grpc.ServiceDesc, options registry.Options) (*mregistry
 		Address: address,
 	}
 
+	version := ""
+	if len(options.Versions) > 0 {
+		version = options.Versions[0]
+	}
+
 	service := &mregistry.Service{
 		Name:    sd.ServiceName,
-		Version: options.Version,
+		Version: version,
 		Nodes:   []*mregistry.Node{node},
 	}
 

@@ -46,8 +46,8 @@ type service struct {
 }
 
 type microResolver struct {
-	service *service
-	version string
+	service  *service
+	versions []string
 
 	index int64
 	cc    resolver.ClientConn
@@ -61,15 +61,21 @@ func (b *microBuilder) Scheme() string {
 // Build to resolver.Resolver
 // target: {schema}://[authority]/{serviceName}[?version=v1]
 // target使用query参数做version筛选
-func (b *microBuilder) Build(target resolver.Target, cc resolver.ClientConn, opts resolver.BuildOption) (resolver.Resolver, error) {
-	var serviceName, serviceVersion string
+// TODO 多版本支持
+func (b *microBuilder) Build(target resolver.Target, cc resolver.ClientConn, opts resolver.BuildOptions) (resolver.Resolver, error) {
+	var serviceName string
+	var serviceVersion []string
 	if c := strings.Count(target.Endpoint, "?"); c > 0 {
 		if u, err := url.Parse(target.Endpoint); err == nil {
+			grpclog.Infof("target endpoint: %v", target.Endpoint)
 			serviceName = u.Path
 			query := u.Query()
 			if v := query.Get("version"); len(v) > 0 {
-				serviceVersion = query.Get("version")
+				val := query.Get("version")
+				serviceVersion = strings.Split(val, "|")
 			}
+
+			grpclog.Infof("version: %v", serviceVersion)
 		}
 	} else {
 		serviceName = target.Endpoint
@@ -83,13 +89,17 @@ func (b *microBuilder) Build(target resolver.Target, cc resolver.ClientConn, opt
 		// 使用当前service nodes
 		s.mu.Lock()
 		var ccNodes []resolver.Address
-		if serviceVersion == "" {
+		if len(serviceVersion) == 0 {
 			ccNodes = make([]resolver.Address, 0, len(s.nodes))
 			for _, v := range s.nodes {
 				ccNodes = append(ccNodes, v...)
 			}
-		} else if nodes, ok := s.nodes[serviceVersion]; ok {
-			ccNodes = nodes
+		} else {
+			for _, v := range serviceVersion {
+				if nodes, ok := s.nodes[v]; ok {
+					ccNodes = append(ccNodes, nodes...)
+				}
+			}
 		}
 
 		// TODO 检查watching状态?
@@ -102,6 +112,8 @@ func (b *microBuilder) Build(target resolver.Target, cc resolver.ClientConn, opt
 			s.watching = true
 		}
 		s.mu.Unlock()
+
+		grpclog.Infof("nodes: %+v", ccNodes)
 
 		cc.UpdateState(resolver.State{Addresses: ccNodes})
 	} else {
@@ -137,13 +149,17 @@ func (b *microBuilder) Build(target resolver.Target, cc resolver.ClientConn, opt
 		}
 
 		var ccNodes []resolver.Address
-		if serviceVersion == "" {
+		if len(serviceVersion) == 0 {
 			ccNodes = make([]resolver.Address, 0, count)
 			for _, v := range s.nodes {
 				ccNodes = append(ccNodes, v...)
 			}
-		} else if nodes, ok := s.nodes[serviceVersion]; ok {
-			ccNodes = nodes
+		} else {
+			for _, v := range serviceVersion {
+				if nodes, ok := s.nodes[v]; ok {
+					ccNodes = append(ccNodes, nodes...)
+				}
+			}
 		}
 
 		err = s.watch()
@@ -155,15 +171,17 @@ func (b *microBuilder) Build(target resolver.Target, cc resolver.ClientConn, opt
 		s.watching = true
 		s.mu.Unlock()
 
+		grpclog.Infof("versions: %_v, nodes: %+v", serviceVersion, ccNodes)
+
 		cc.UpdateState(resolver.State{Addresses: ccNodes})
 	}
 
 	index := atomic.AddInt64(&s.connIndex, 1)
 	r := &microResolver{
-		service: s,
-		version: serviceVersion,
-		cc:      cc,
-		index:   index,
+		service:  s,
+		versions: serviceVersion,
+		cc:       cc,
+		index:    index,
 	}
 
 	s.conns.Store(index, r)
@@ -190,24 +208,25 @@ func (s *service) watch() error {
 		for {
 			limiter.Wait(context.Background())
 			if result, err := watcher.Next(); err == nil {
-				if err := s.update(result); err == nil {
-					var allNodes []resolver.Address
+				if err := s.process(result); err == nil {
 					s.conns.Range(func(key, value interface{}) bool {
-
 						if r, ok := value.(*microResolver); ok {
-							if r.version == "" {
-								if allNodes == nil {
-									allNodes = make([]resolver.Address, 0, len(s.nodes))
-									for _, v := range s.nodes {
-										allNodes = append(allNodes, v...)
+							var allNodes []resolver.Address
+							if len(r.versions) == 0 {
+								for _, v := range s.nodes {
+									allNodes = append(allNodes, v...)
+								}
+							} else {
+								for _, v := range r.versions {
+									if nodes, ok := s.nodes[v]; ok {
+										allNodes = append(allNodes, nodes...)
 									}
 								}
-
-								r.cc.UpdateState(resolver.State{Addresses: allNodes})
-							} else if nodes, ok := s.nodes[r.version]; ok {
-
-								r.cc.UpdateState(resolver.State{Addresses: nodes})
 							}
+
+							grpclog.Infof("nodes: %+v", allNodes)
+
+							r.cc.UpdateState(resolver.State{Addresses: allNodes})
 						} else {
 							grpclog.Warning("grpc-contrib.registry.go-micro: microResolver conv error")
 						}
@@ -229,7 +248,7 @@ func (s *service) watch() error {
 	return nil
 }
 
-func (s *service) update(res *registry.Result) error {
+func (s *service) process(res *registry.Result) error {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 

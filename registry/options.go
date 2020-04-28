@@ -3,13 +3,13 @@ package registry
 type Option func(options *Options)
 
 type Options struct {
-	Version string
-	Addr    string
+	Versions []string
+	Addr     string
 }
 
-func WithVersion(version string) Option {
+func WithVersion(version ...string) Option {
 	return func(options *Options) {
-		options.Version = version
+		options.Versions = append(options.Versions, version...)
 	}
 }
 
