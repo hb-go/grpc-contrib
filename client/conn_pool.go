@@ -1,11 +1,16 @@
 package client
 
 import (
+	"context"
 	"sync"
 	"time"
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/connectivity"
+)
+
+var (
+	DefaultDialTimeout = 3 * time.Second
 )
 
 type Pool struct {
@@ -56,7 +61,15 @@ func (p *Pool) Get(addr string, opts ...grpc.DialOption) (*poolConn, error) {
 	p.Unlock()
 
 	// create new conn
-	cc, err := grpc.Dial(addr, opts...)
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	// TODO timeout option
+	if DefaultDialTimeout > 0 {
+		ctx, _ = context.WithTimeout(ctx, DefaultDialTimeout)
+	}
+
+	cc, err := grpc.DialContext(ctx, addr, opts...)
 	if err != nil {
 		return nil, err
 	}
