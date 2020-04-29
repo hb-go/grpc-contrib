@@ -17,6 +17,7 @@ import (
 const schema = "micro"
 const watchLimit = 1.0
 const watchBurst = 3
+const queryValSeq = "|"
 
 func init() {
 	r := newBuilder()
@@ -67,15 +68,12 @@ func (b *microBuilder) Build(target resolver.Target, cc resolver.ClientConn, opt
 	var serviceVersion []string
 	if c := strings.Count(target.Endpoint, "?"); c > 0 {
 		if u, err := url.Parse(target.Endpoint); err == nil {
-			grpclog.Infof("target endpoint: %v", target.Endpoint)
 			serviceName = u.Path
 			query := u.Query()
 			if v := query.Get("version"); len(v) > 0 {
 				val := query.Get("version")
-				serviceVersion = strings.Split(val, "|")
+				serviceVersion = strings.Split(val, queryValSeq)
 			}
-
-			grpclog.Infof("version: %v", serviceVersion)
 		}
 	} else {
 		serviceName = target.Endpoint
@@ -112,8 +110,6 @@ func (b *microBuilder) Build(target resolver.Target, cc resolver.ClientConn, opt
 			s.watching = true
 		}
 		s.mu.Unlock()
-
-		grpclog.Infof("nodes: %+v", ccNodes)
 
 		cc.UpdateState(resolver.State{Addresses: ccNodes})
 	} else {
@@ -171,8 +167,6 @@ func (b *microBuilder) Build(target resolver.Target, cc resolver.ClientConn, opt
 		s.watching = true
 		s.mu.Unlock()
 
-		grpclog.Infof("versions: %_v, nodes: %+v", serviceVersion, ccNodes)
-
 		cc.UpdateState(resolver.State{Addresses: ccNodes})
 	}
 
@@ -223,8 +217,6 @@ func (s *service) watch() error {
 									}
 								}
 							}
-
-							grpclog.Infof("nodes: %+v", allNodes)
 
 							r.cc.UpdateState(resolver.State{Addresses: allNodes})
 						} else {

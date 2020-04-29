@@ -46,7 +46,7 @@ func (r *microRegistry) NewTarget(sd *grpc.ServiceDesc, opts ...registry.Option)
 		return schema + ":///" + sd.ServiceName
 	}
 
-	return schema + ":///" + sd.ServiceName + "?version=" + strings.Join(options.Versions, "|")
+	return schema + ":///" + sd.ServiceName + "?version=" + strings.Join(options.Versions, queryValSeq)
 }
 
 // Register
