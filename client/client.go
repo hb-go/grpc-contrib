@@ -24,13 +24,13 @@ func SetPoolTTL(ttl time.Duration) {
 	pool.ttl = int64(ttl.Seconds())
 }
 
-func Client(desc *grpc.ServiceDesc, options ...Option) (*grpc.ClientConn, io.Closer, error) {
+func Client(s *registry.Service, options ...Option) (*grpc.ClientConn, io.Closer, error) {
 	opts := newOptions(options...)
 	if len(opts.Name) > 0 {
-		desc.ServiceName = opts.Name
+		s.Name = opts.Name
 	}
 
-	addr := registry.NewTarget(desc, opts.RegistryOptions...)
+	addr := registry.NewTarget(s, opts.RegistryOptions...)
 
 	conn, err := pool.Get(addr, opts.DialOptions...)
 	if err != nil {

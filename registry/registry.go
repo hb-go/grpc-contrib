@@ -1,32 +1,69 @@
+// Package registry is an interface for service discovery
 package registry
 
 import (
-	"google.golang.org/grpc"
+	"errors"
 )
 
 var (
 	DefaultRegistry = NewRegistry()
+
+	// Not found error when GetService is called
+	ErrNotFound = errors.New("service not found")
+	// Watcher stopped error when watcher is stopped
+	ErrWatcherStopped = errors.New("watcher stopped")
 )
 
+// The registry provides an interface for service discovery
+// and an abstraction over varying implementations
+// {consul, etcd, zookeeper, ...}
 type Registry interface {
-	// 生成grpc.Dial target
-	NewTarget(sd *grpc.ServiceDesc, opts ...Option) string
-
-	// 注册服务
-	Register(sd *grpc.ServiceDesc, opts ...Option) error
-	// 注销服务
-	// sd=nil，注销全部服务
-	Deregister(sd *grpc.ServiceDesc, opts ...Option)
+	Init(...Option) error
+	Options() Options
+	NewTarget(*Service, ...Option) string
+	Register(*Service, ...RegisterOption) error
+	Deregister(*Service) error
+	GetService(string) ([]*Service, error)
+	ListServices() ([]*Service, error)
+	Watch(...WatchOption) (Watcher, error)
+	String() string
 }
 
-func NewTarget(sd *grpc.ServiceDesc, opts ...Option) string {
-	return DefaultRegistry.NewTarget(sd, opts...)
+type Option func(*Options)
+
+type RegisterOption func(*RegisterOptions)
+
+type WatchOption func(*WatchOptions)
+
+func NewTarget(s *Service, opts ...Option) string {
+	return DefaultRegistry.NewTarget(s, opts...)
 }
 
-func Register(sd *grpc.ServiceDesc, opts ...Option) error {
-	return DefaultRegistry.Register(sd, opts...)
+// Register a service node. Additionally supply options such as TTL.
+func Register(s *Service, opts ...RegisterOption) error {
+	return DefaultRegistry.Register(s, opts...)
 }
 
-func Deregister(sd *grpc.ServiceDesc, opts ...Option) {
-	DefaultRegistry.Deregister(sd, opts...)
+// Deregister a service node
+func Deregister(s *Service) error {
+	return DefaultRegistry.Deregister(s)
+}
+
+// Retrieve a service. A slice is returned since we separate Name/Version.
+func GetService(name string) ([]*Service, error) {
+	return DefaultRegistry.GetService(name)
+}
+
+// List the services. Only returns service names
+func ListServices() ([]*Service, error) {
+	return DefaultRegistry.ListServices()
+}
+
+// Watch returns a watcher which allows you to track updates to the registry.
+func Watch(opts ...WatchOption) (Watcher, error) {
+	return DefaultRegistry.Watch(opts...)
+}
+
+func String() string {
+	return DefaultRegistry.String()
 }

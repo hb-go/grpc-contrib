@@ -1,4 +1,4 @@
-package micro
+package registry
 
 import (
 	"context"
@@ -8,25 +8,19 @@ import (
 	"sync"
 	"sync/atomic"
 
-	"github.com/micro/go-micro/v2/registry"
 	"golang.org/x/time/rate"
 	"google.golang.org/grpc/grpclog"
 	"google.golang.org/grpc/resolver"
 )
 
-const schema = "micro"
+const schema = "registry"
 const watchLimit = 1.0
 const watchBurst = 3
 const queryValSeq = "|"
 
-func init() {
-	r := newBuilder()
-	resolver.Register(r)
-}
-
 // implementation of grpc.resolve.Builder
-type microBuilder struct {
-	registry registry.Registry
+type registryBuilder struct {
+	registry Registry
 
 	mu        sync.RWMutex
 	resolvers map[string]*service
@@ -36,7 +30,7 @@ type service struct {
 	name   string
 	target resolver.Target
 
-	builder *microBuilder
+	builder *registryBuilder
 
 	mu       sync.RWMutex
 	watching bool
@@ -46,7 +40,7 @@ type service struct {
 	connIndex int64
 }
 
-type microResolver struct {
+type registryResolver struct {
 	service  *service
 	versions []string
 
@@ -55,15 +49,14 @@ type microResolver struct {
 }
 
 // Scheme
-func (b *microBuilder) Scheme() string {
+func (b *registryBuilder) Scheme() string {
 	return schema
 }
 
 // Build to resolver.Resolver
 // target: {schema}://[authority]/{serviceName}[?version=v1]
 // target使用query参数做version筛选
-// TODO 多版本支持
-func (b *microBuilder) Build(target resolver.Target, cc resolver.ClientConn, opts resolver.BuildOptions) (resolver.Resolver, error) {
+func (b *registryBuilder) Build(target resolver.Target, cc resolver.ClientConn, opts resolver.BuildOptions) (resolver.Resolver, error) {
 	var serviceName string
 	var serviceVersion []string
 	if c := strings.Count(target.Endpoint, "?"); c > 0 {
@@ -78,6 +71,8 @@ func (b *microBuilder) Build(target resolver.Target, cc resolver.ClientConn, opt
 	} else {
 		serviceName = target.Endpoint
 	}
+
+	// TODO resolver 需要根据 endpoint 记录 ClientConn，版本等筛选信息属于 client
 
 	b.mu.Lock()
 	s, ok := b.resolvers[serviceName]
@@ -125,7 +120,7 @@ func (b *microBuilder) Build(target resolver.Target, cc resolver.ClientConn, opt
 		b.mu.Unlock()
 
 		// 从registry获取services
-		services, err := registry.GetService(s.name)
+		services, err := b.registry.GetService(s.name)
 		if err != nil {
 			s.mu.Unlock()
 			return nil, err
@@ -171,7 +166,7 @@ func (b *microBuilder) Build(target resolver.Target, cc resolver.ClientConn, opt
 	}
 
 	index := atomic.AddInt64(&s.connIndex, 1)
-	r := &microResolver{
+	r := &registryResolver{
 		service:  s,
 		versions: serviceVersion,
 		cc:       cc,
@@ -183,28 +178,28 @@ func (b *microBuilder) Build(target resolver.Target, cc resolver.ClientConn, opt
 }
 
 // ResolveNow
-func (r *microResolver) ResolveNow(rn resolver.ResolveNowOption) {
+func (r *registryResolver) ResolveNow(rn resolver.ResolveNowOptions) {
 }
 
 // Close
-func (r *microResolver) Close() {
+func (r *registryResolver) Close() {
 	r.service.conns.Delete(r.index)
 }
 
 func (s *service) watch() error {
-	watcher, err := registry.Watch(registry.WatchService(s.name))
+	watcher, err := s.builder.registry.Watch(WatchService(s.name))
 	if err != nil {
 		return err
 	}
 
-	go func(watcher registry.Watcher) {
+	go func(watcher Watcher) {
 		limiter := rate.NewLimiter(rate.Limit(watchLimit), watchBurst)
 		for {
 			limiter.Wait(context.Background())
 			if result, err := watcher.Next(); err == nil {
 				if err := s.process(result); err == nil {
 					s.conns.Range(func(key, value interface{}) bool {
-						if r, ok := value.(*microResolver); ok {
+						if r, ok := value.(*registryResolver); ok {
 							var allNodes []resolver.Address
 							if len(r.versions) == 0 {
 								for _, v := range s.nodes {
@@ -230,7 +225,7 @@ func (s *service) watch() error {
 				}
 			} else {
 				grpclog.Warningf("grpc-contrib.registry.go-micro: resolver watch error: %v", err)
-				if err == registry.ErrWatcherStopped {
+				if err == ErrWatcherStopped {
 					return
 				}
 			}
@@ -240,7 +235,7 @@ func (s *service) watch() error {
 	return nil
 }
 
-func (s *service) process(res *registry.Result) error {
+func (s *service) process(res *Result) error {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
@@ -302,9 +297,15 @@ func (s *service) process(res *registry.Result) error {
 	}
 }
 
-// NewBuilder return resolver builder
-func newBuilder() resolver.Builder {
-	return &microBuilder{
+// newBuilder return resolver builder
+func newBuilder(r Registry) resolver.Builder {
+	return &registryBuilder{
+		registry:  r,
 		resolvers: make(map[string]*service),
 	}
+}
+
+func RegisterBuilder(r Registry) {
+	b := newBuilder(r)
+	resolver.Register(b)
 }

@@ -1,30 +1,50 @@
 package registry
 
-import (
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/grpclog"
-)
-
-type mockRegistry struct {
+type MockRegistry struct {
 }
 
-// NewTarget return grpc.Dial target
-func (r *mockRegistry) NewTarget(sd *grpc.ServiceDesc, opts ...Option) string {
-	grpclog.Error("grpc-contrib.registry: default mock registry unrealized")
-	return ""
-}
-
-// Register
-func (r *mockRegistry) Register(sd *grpc.ServiceDesc, opts ...Option) error {
-	grpclog.Error("grpc-contrib.registry: default mock registry unrealized")
+func (*MockRegistry) Init(...Option) error {
 	return nil
 }
 
-// Deregister
-func (r *mockRegistry) Deregister(sd *grpc.ServiceDesc, opts ...Option) {
-	grpclog.Error("grpc-contrib.registry: default mock registry unrealized")
+func (*MockRegistry) Options() Options {
+	return Options{}
 }
 
-func NewRegistry() Registry {
-	return &mockRegistry{}
+func (*MockRegistry) NewTarget(*Service, ...Option) string {
+	return ""
+}
+func (*MockRegistry) Register(*Service, ...RegisterOption) error {
+	return nil
+}
+func (*MockRegistry) Deregister(*Service) error {
+	return nil
+}
+
+func (*MockRegistry) GetService(string) ([]*Service, error) {
+	return []*Service{}, nil
+}
+
+func (*MockRegistry) ListServices() ([]*Service, error) {
+	return []*Service{}, nil
+}
+
+func (*MockRegistry) Watch(...WatchOption) (Watcher, error) {
+	return &mockWatcher{}, nil
+}
+
+func (*MockRegistry) String() string {
+	return "mock"
+}
+
+type mockWatcher struct {
+}
+
+func (*mockWatcher) Next() (*Result, error) {
+	ch := make(chan bool, 1)
+	<-ch
+	return nil, nil
+}
+func (*mockWatcher) Stop() {
+
 }

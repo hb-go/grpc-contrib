@@ -48,7 +48,7 @@ func newBuilder() resolver.Builder {
 }
 
 // ResolveNow
-func (r *istioResolver) ResolveNow(rn resolver.ResolveNowOption) {
+func (r *istioResolver) ResolveNow(rn resolver.ResolveNowOptions) {
 }
 
 // Close
