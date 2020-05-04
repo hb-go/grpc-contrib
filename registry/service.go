@@ -24,6 +24,7 @@ type Method struct {
 }
 
 type Binding struct {
-	Method   string             `json:"method"`
-	PathTmpl *httprule.Template `json:"path_tmpl"`
+	Method          string             `json:"method"`
+	PathTmpl        *httprule.Template `json:"path_tmpl"`
+	AssumeColonVerb bool               `json:"assume_colon_verb"`
 }
