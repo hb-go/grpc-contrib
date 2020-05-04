@@ -5,7 +5,6 @@ import (
 	"strconv"
 
 	pb "github.com/golang/protobuf/protoc-gen-go/descriptor"
-
 	"github.com/hb-go/grpc-contrib/protoc-gen-hb-grpc/generator"
 )
 
@@ -47,7 +46,7 @@ func (g *grpcRegistry) Generate(file *generator.FileDescriptor) {
 	if len(file.FileDescriptorProto.Service) == 0 {
 		return
 	}
-	g.P("// gRPC Registry")
+	g.P("// gRPC registry service")
 	g.P("// github.com/hb-go/grpc-contrib/registry")
 
 	if len(file.FileDescriptorProto.Service) > 0 {
@@ -74,20 +73,16 @@ func (g *grpcRegistry) GenerateImports(file *generator.FileDescriptor) {
 
 func (g *grpcRegistry) generateService(file *generator.FileDescriptor, service *pb.ServiceDescriptorProto, index int) {
 	g.P()
-	g.P("// " + service.GetName() + " registry")
-	g.P("func Target" + service.GetName() + "(opts ...registry.Option) string {")
-	g.P("return registry.NewTarget(&_" + service.GetName() + "_serviceDesc, opts...)")
+	g.P("// " + service.GetName() + " registry service")
+	g.P("var RegistryService" + service.GetName() + " = registry.Service{")
+	g.P("Name:_" + service.GetName() + "_serviceDesc.ServiceName,")
+	g.P("Methods:  []*registry.Method{")
+	for _, m := range service.Method {
+		g.P("&registry.Method{")
+		g.P(`Name: "` + m.GetName() + `",`)
+		g.P("},")
+		g.P()
+	}
+	g.P("},")
 	g.P("}")
-	g.P()
-
-	g.P("func Register" + service.GetName() + "(opts ...registry.Option) error {")
-	g.P("return registry.Register(&_" + service.GetName() + "_serviceDesc, opts...)")
-	g.P("}")
-	g.P()
-
-	g.P("func Deregister" + service.GetName() + "(opts ...registry.Option) {")
-	g.P("registry.Deregister(&_" + service.GetName() + "_serviceDesc, opts...)")
-	g.P("}")
-	g.P()
-
 }

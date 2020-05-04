@@ -110,17 +110,17 @@ func init() {
 func init() { proto.RegisterFile("proto/service.proto", fileDescriptor_c33392ef2c1961ba) }
 
 var fileDescriptor_c33392ef2c1961ba = []byte{
-	// 154 bytes of a gzipped FileDescriptorProto
+	// 150 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe2, 0x12, 0x2e, 0x28, 0xca, 0x2f,
 	0xc9, 0xd7, 0x2f, 0x4e, 0x2d, 0x2a, 0xcb, 0x4c, 0x4e, 0xd5, 0x03, 0xf3, 0x84, 0xb8, 0x92, 0xf3,
 	0x73, 0xf5, 0x32, 0x92, 0x92, 0x33, 0x52, 0xf3, 0x94, 0x64, 0xb9, 0xd8, 0x83, 0x52, 0x0b, 0x4b,
 	0x53, 0x8b, 0x4b, 0x84, 0x84, 0xb8, 0x58, 0xf2, 0x12, 0x73, 0x53, 0x25, 0x18, 0x15, 0x18, 0x35,
 	0x38, 0x83, 0xc0, 0x6c, 0x25, 0x19, 0x2e, 0x8e, 0xa0, 0xd4, 0xe2, 0x82, 0xfc, 0xbc, 0xe2, 0x54,
-	0x21, 0x01, 0x2e, 0xe6, 0xdc, 0xe2, 0x74, 0xa8, 0x34, 0x88, 0x69, 0xe4, 0xca, 0xc5, 0xe7, 0x5a,
-	0x91, 0x98, 0x5b, 0x90, 0x93, 0x1a, 0x0c, 0xb1, 0x40, 0xc8, 0x98, 0x8b, 0xc5, 0x39, 0x31, 0x27,
-	0x47, 0x48, 0x58, 0x0f, 0x61, 0x87, 0x1e, 0xd4, 0x02, 0x29, 0x11, 0x54, 0x41, 0x88, 0xb1, 0x4a,
-	0x0c, 0x4e, 0xec, 0x51, 0xac, 0x60, 0x87, 0x25, 0xb1, 0x81, 0x29, 0x63, 0x40, 0x00, 0x00, 0x00,
-	0xff, 0xff, 0xf9, 0xf8, 0xc3, 0x6c, 0xb6, 0x00, 0x00, 0x00,
+	0x21, 0x01, 0x2e, 0xe6, 0xdc, 0xe2, 0x74, 0xa8, 0x34, 0x88, 0x69, 0x64, 0xc7, 0xc5, 0xee, 0x5a,
+	0x91, 0x98, 0x5b, 0x90, 0x93, 0x2a, 0x64, 0xcc, 0xc5, 0xe2, 0x9c, 0x98, 0x93, 0x23, 0x24, 0xac,
+	0x87, 0x30, 0x5c, 0x0f, 0x6a, 0xb2, 0x94, 0x08, 0xaa, 0x20, 0xc4, 0x3c, 0x25, 0x06, 0x27, 0xf6,
+	0x28, 0x56, 0xb0, 0x8b, 0x92, 0xd8, 0xc0, 0x94, 0x31, 0x20, 0x00, 0x00, 0xff, 0xff, 0x3f, 0xd8,
+	0xf7, 0xd7, 0xaf, 0x00, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -131,72 +131,72 @@ var _ grpc.ClientConn
 // is compatible with the grpc package it is being compiled against.
 const _ = grpc.SupportPackageIsVersion4
 
-// ExampleServiceClient is the client API for ExampleService service.
+// ExampleClient is the client API for Example service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
-type ExampleServiceClient interface {
+type ExampleClient interface {
 	Call(ctx context.Context, in *Request, opts ...grpc.CallOption) (*Response, error)
 }
 
-type exampleServiceClient struct {
+type exampleClient struct {
 	cc *grpc.ClientConn
 }
 
-func NewExampleServiceClient(cc *grpc.ClientConn) ExampleServiceClient {
-	return &exampleServiceClient{cc}
+func NewExampleClient(cc *grpc.ClientConn) ExampleClient {
+	return &exampleClient{cc}
 }
 
-func (c *exampleServiceClient) Call(ctx context.Context, in *Request, opts ...grpc.CallOption) (*Response, error) {
+func (c *exampleClient) Call(ctx context.Context, in *Request, opts ...grpc.CallOption) (*Response, error) {
 	out := new(Response)
-	err := c.cc.Invoke(ctx, "/com.hbchen.ExampleService/Call", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/com.hbchen.Example/Call", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// ExampleServiceServer is the server API for ExampleService service.
-type ExampleServiceServer interface {
+// ExampleServer is the server API for Example service.
+type ExampleServer interface {
 	Call(context.Context, *Request) (*Response, error)
 }
 
-// UnimplementedExampleServiceServer can be embedded to have forward compatible implementations.
-type UnimplementedExampleServiceServer struct {
+// UnimplementedExampleServer can be embedded to have forward compatible implementations.
+type UnimplementedExampleServer struct {
 }
 
-func (*UnimplementedExampleServiceServer) Call(ctx context.Context, req *Request) (*Response, error) {
+func (*UnimplementedExampleServer) Call(ctx context.Context, req *Request) (*Response, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Call not implemented")
 }
 
-func RegisterExampleServiceServer(s *grpc.Server, srv ExampleServiceServer) {
-	s.RegisterService(&_ExampleService_serviceDesc, srv)
+func RegisterExampleServer(s *grpc.Server, srv ExampleServer) {
+	s.RegisterService(&_Example_serviceDesc, srv)
 }
 
-func _ExampleService_Call_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Example_Call_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(Request)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ExampleServiceServer).Call(ctx, in)
+		return srv.(ExampleServer).Call(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/com.hbchen.ExampleService/Call",
+		FullMethod: "/com.hbchen.Example/Call",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ExampleServiceServer).Call(ctx, req.(*Request))
+		return srv.(ExampleServer).Call(ctx, req.(*Request))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-var _ExampleService_serviceDesc = grpc.ServiceDesc{
-	ServiceName: "com.hbchen.ExampleService",
-	HandlerType: (*ExampleServiceServer)(nil),
+var _Example_serviceDesc = grpc.ServiceDesc{
+	ServiceName: "com.hbchen.Example",
+	HandlerType: (*ExampleServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
 			MethodName: "Call",
-			Handler:    _ExampleService_Call_Handler,
+			Handler:    _Example_Call_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

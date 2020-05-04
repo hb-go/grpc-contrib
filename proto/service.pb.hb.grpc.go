@@ -10,6 +10,10 @@ import (
 )
 
 import (
+	grpc "google.golang.org/grpc"
+)
+
+import (
 	registry "github.com/hb-go/grpc-contrib/registry"
 )
 
@@ -24,18 +28,22 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.ProtoPackageIsVersion3 // please upgrade the proto package
 
-// gRPC Registry
+// Export service desc
+
+// Example desc
+func ServiceDescExample() grpc.ServiceDesc {
+	return _Example_serviceDesc
+}
+
+// gRPC registry service
 // github.com/hb-go/grpc-contrib/registry
 
-// ExampleService registry
-func TargetExampleService(opts ...registry.Option) string {
-	return registry.NewTarget(&_ExampleService_serviceDesc, opts...)
-}
-
-func RegisterExampleService(opts ...registry.Option) error {
-	return registry.Register(&_ExampleService_serviceDesc, opts...)
-}
-
-func DeregisterExampleService(opts ...registry.Option) {
-	registry.Deregister(&_ExampleService_serviceDesc, opts...)
+// Example registry service
+var RegistryServiceExample = registry.Service{
+	Name: _Example_serviceDesc.ServiceName,
+	Methods: []*registry.Method{
+		&registry.Method{
+			Name: "Call",
+		},
+	},
 }
