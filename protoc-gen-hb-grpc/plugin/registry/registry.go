@@ -81,7 +81,6 @@ func (g *grpcRegistry) generateService(file *generator.FileDescriptor, service *
 		g.P("&registry.Method{")
 		g.P(`Name: "` + m.GetName() + `",`)
 		g.P("},")
-		g.P()
 	}
 	g.P("},")
 	g.P("}")
