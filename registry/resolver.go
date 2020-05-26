@@ -27,8 +27,7 @@ type registryBuilder struct {
 }
 
 type service struct {
-	name   string
-	target resolver.Target
+	name string
 
 	builder *registryBuilder
 
@@ -42,6 +41,7 @@ type service struct {
 
 type registryResolver struct {
 	service  *service
+	target   resolver.Target
 	versions []string
 
 	index int64
@@ -110,7 +110,6 @@ func (b *registryBuilder) Build(target resolver.Target, cc resolver.ClientConn, 
 	} else {
 		s = &service{
 			name:    serviceName,
-			target:  target,
 			builder: b,
 			nodes:   make(map[string][]resolver.Address),
 		}
@@ -168,6 +167,7 @@ func (b *registryBuilder) Build(target resolver.Target, cc resolver.ClientConn, 
 	index := atomic.AddInt64(&s.connIndex, 1)
 	r := &registryResolver{
 		service:  s,
+		target:   target,
 		versions: serviceVersion,
 		cc:       cc,
 		index:    index,
@@ -215,16 +215,16 @@ func (s *service) watch() error {
 
 							r.cc.UpdateState(resolver.State{Addresses: allNodes})
 						} else {
-							grpclog.Warning("grpc-contrib.registry.go-micro: microResolver conv error")
+							grpclog.Warning("grpc-contrib.registry: resolver conv error")
 						}
 
 						return true
 					})
 				} else {
-					grpclog.Warningf("grpc-contrib.registry.go-micro: %v", err)
+					grpclog.Warningf("grpc-contrib.registry: %v", err)
 				}
 			} else {
-				grpclog.Warningf("grpc-contrib.registry.go-micro: resolver watch error: %v", err)
+				grpclog.Warningf("grpc-contrib.registry: resolver watch error: %v", err)
 				if err == ErrWatcherStopped {
 					return
 				}
