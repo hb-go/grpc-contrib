@@ -5,7 +5,8 @@ import (
 	"errors"
 	"time"
 
-	"github.com/coreos/etcd/clientv3"
+	"go.etcd.io/etcd/clientv3"
+
 	"github.com/hb-go/grpc-contrib/registry"
 )
 

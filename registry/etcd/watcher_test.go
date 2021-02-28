@@ -5,6 +5,8 @@ import (
 	"testing"
 	"time"
 
+	"github.com/grpc-ecosystem/grpc-gateway/protoc-gen-grpc-gateway/httprule"
+
 	"github.com/hb-go/grpc-contrib/registry"
 )
 
@@ -20,18 +22,23 @@ func TestWatcher(t *testing.T) {
 			Methods: []*registry.Method{
 				{
 					Name: "test1-1",
-					Routes: []*registry.Route{
+					Bindings: []*registry.Binding{
 						{
 							Method: "GET",
-							Pattern: &registry.Pattern{
-								Version:         1,
-								Ops:             nil,
-								Pool:            nil,
-								Verb:            "",
-								AssumeColonVerb: false,
+							PathTmpl: &httprule.Template{
+								Version: 1,
+								Pool:    nil,
+								Verb:    "",
 							},
+							AssumeColonVerb: false,
 						},
 					},
+				},
+			},
+			Nodes: []*registry.Node{
+				{
+					Id:      "1",
+					Address: "127.0.0.1:80",
 				},
 			},
 		},
@@ -41,18 +48,23 @@ func TestWatcher(t *testing.T) {
 			Methods: []*registry.Method{
 				{
 					Name: "test1-2",
-					Routes: []*registry.Route{
+					Bindings: []*registry.Binding{
 						{
 							Method: "POST",
-							Pattern: &registry.Pattern{
-								Version:         1,
-								Ops:             nil,
-								Pool:            nil,
-								Verb:            "",
-								AssumeColonVerb: false,
+							PathTmpl: &httprule.Template{
+								Version: 1,
+								Pool:    nil,
+								Verb:    "",
 							},
+							AssumeColonVerb: false,
 						},
 					},
+				},
+			},
+			Nodes: []*registry.Node{
+				{
+					Id:      "2",
+					Address: "127.0.0.1:80",
 				},
 			},
 		},
@@ -62,18 +74,23 @@ func TestWatcher(t *testing.T) {
 			Methods: []*registry.Method{
 				{
 					Name: "test2-1",
-					Routes: []*registry.Route{
+					Bindings: []*registry.Binding{
 						{
 							Method: "GET",
-							Pattern: &registry.Pattern{
-								Version:         1,
-								Ops:             nil,
-								Pool:            nil,
-								Verb:            "",
-								AssumeColonVerb: false,
+							PathTmpl: &httprule.Template{
+								Version: 1,
+								Pool:    nil,
+								Verb:    "",
 							},
+							AssumeColonVerb: false,
 						},
 					},
+				},
+			},
+			Nodes: []*registry.Node{
+				{
+					Id:      "3",
+					Address: "127.0.0.1:80",
 				},
 			},
 		},
@@ -103,8 +120,8 @@ func TestWatcher(t *testing.T) {
 			t.Fatalf("Expected node id %s got %s", service.Methods[0].Name, method.Name)
 		}
 
-		if method.Routes[0].Method != service.Methods[0].Routes[0].Method {
-			t.Fatalf("Expected node address %s got %s", service.Methods[0].Routes[0].Method, method.Routes[0].Method)
+		if method.Bindings[0].Method != service.Methods[0].Bindings[0].Method {
+			t.Fatalf("Expected node address %s got %s", service.Methods[0].Bindings[0].Method, method.Bindings[0].Method)
 		}
 	}
 
