@@ -14,8 +14,8 @@ import (
 	"time"
 
 	hash "github.com/mitchellh/hashstructure"
-	"go.etcd.io/etcd/clientv3"
-	"go.etcd.io/etcd/etcdserver/api/v3rpc/rpctypes"
+	"go.etcd.io/etcd/api/v3/v3rpc/rpctypes"
+	"go.etcd.io/etcd/client/v3"
 	"go.uber.org/zap"
 
 	"github.com/hb-go/grpc-contrib/registry"

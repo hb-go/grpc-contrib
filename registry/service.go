@@ -1,9 +1,5 @@
 package registry
 
-import (
-	"github.com/grpc-ecosystem/grpc-gateway/protoc-gen-grpc-gateway/httprule"
-)
-
 type Service struct {
 	Name     string            `json:"name"`
 	Version  string            `json:"version"`
@@ -24,7 +20,23 @@ type Method struct {
 }
 
 type Binding struct {
-	Method          string             `json:"method"`
-	PathTmpl        *httprule.Template `json:"path_tmpl"`
-	AssumeColonVerb bool               `json:"assume_colon_verb"`
+	Method          string    `json:"method"`
+	PathTmpl        *PathTmpl `json:"path_tmpl"`
+	AssumeColonVerb bool      `json:"assume_colon_verb"`
+}
+
+// PathTmpl is a compiled representation of path templates.
+type PathTmpl struct {
+	// Version is the version number of the format.
+	Version int
+	// OpCodes is a sequence of operations.
+	OpCodes []int
+	// Pool is a constant pool
+	Pool []string
+	// Verb is a VERB part in the template.
+	Verb string
+	// Fields is a list of field paths bound in this template.
+	Fields []string
+	// Original template (example: /v1/a_bit_of_everything)
+	Template string
 }

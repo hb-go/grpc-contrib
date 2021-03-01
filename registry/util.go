@@ -1,9 +1,5 @@
 package registry
 
-import (
-	"github.com/grpc-ecosystem/grpc-gateway/protoc-gen-grpc-gateway/httprule"
-)
-
 // CopyService make a copy of service
 func CopyService(service *Service) *Service {
 	// copy service
@@ -22,7 +18,7 @@ func CopyService(service *Service) *Service {
 			r := new(Binding)
 			*r = *route
 
-			p := new(httprule.Template)
+			p := new(PathTmpl)
 			*p = *route.PathTmpl
 			r.PathTmpl = p
 

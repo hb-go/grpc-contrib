@@ -5,7 +5,7 @@ import (
 	"errors"
 	"time"
 
-	"go.etcd.io/etcd/clientv3"
+	"go.etcd.io/etcd/client/v3"
 
 	"github.com/hb-go/grpc-contrib/registry"
 )

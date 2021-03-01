@@ -5,8 +5,6 @@ import (
 	"testing"
 	"time"
 
-	"github.com/grpc-ecosystem/grpc-gateway/protoc-gen-grpc-gateway/httprule"
-
 	"github.com/hb-go/grpc-contrib/registry"
 )
 
@@ -25,7 +23,7 @@ func TestWatcher(t *testing.T) {
 					Bindings: []*registry.Binding{
 						{
 							Method: "GET",
-							PathTmpl: &httprule.Template{
+							PathTmpl: &registry.PathTmpl{
 								Version: 1,
 								Pool:    nil,
 								Verb:    "",
@@ -37,8 +35,8 @@ func TestWatcher(t *testing.T) {
 			},
 			Nodes: []*registry.Node{
 				{
-					Id:      "1",
-					Address: "127.0.0.1:80",
+					Id:      "node-1",
+					Address: "127.0.0.1:8080",
 				},
 			},
 		},
@@ -51,7 +49,7 @@ func TestWatcher(t *testing.T) {
 					Bindings: []*registry.Binding{
 						{
 							Method: "POST",
-							PathTmpl: &httprule.Template{
+							PathTmpl: &registry.PathTmpl{
 								Version: 1,
 								Pool:    nil,
 								Verb:    "",
@@ -63,8 +61,8 @@ func TestWatcher(t *testing.T) {
 			},
 			Nodes: []*registry.Node{
 				{
-					Id:      "2",
-					Address: "127.0.0.1:80",
+					Id:      "node-2",
+					Address: "127.0.0.1:8080",
 				},
 			},
 		},
@@ -77,7 +75,7 @@ func TestWatcher(t *testing.T) {
 					Bindings: []*registry.Binding{
 						{
 							Method: "GET",
-							PathTmpl: &httprule.Template{
+							PathTmpl: &registry.PathTmpl{
 								Version: 1,
 								Pool:    nil,
 								Verb:    "",
@@ -89,8 +87,8 @@ func TestWatcher(t *testing.T) {
 			},
 			Nodes: []*registry.Node{
 				{
-					Id:      "3",
-					Address: "127.0.0.1:80",
+					Id:      "node-3",
+					Address: "127.0.0.1:8080",
 				},
 			},
 		},

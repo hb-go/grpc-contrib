@@ -31,7 +31,7 @@ func testPool(t *testing.T, size int, ttl time.Duration) {
 	defer l.Close()
 
 	s := grpc.NewServer()
-	pb.RegisterExampleServiceServer(s, &testService{})
+	pb.RegisterExampleServer(s, &testService{})
 
 	go s.Serve(l)
 	defer s.Stop()
@@ -46,7 +46,7 @@ func testPool(t *testing.T, size int, ttl time.Duration) {
 			t.Fatal(err)
 		}
 
-		rsp, err := pb.NewExampleServiceClient(cc.GetCC()).Call(context.TODO(), &pb.Request{Name: "Hobo"})
+		rsp, err := pb.NewExampleClient(cc.GetCC()).Call(context.TODO(), &pb.Request{Name: "Hobo"})
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -89,7 +89,7 @@ func benchPool(t *testing.B, addr string, p *Pool) {
 					t.Fatal(err)
 				}
 
-				rsp, err := pb.NewExampleServiceClient(cc.GetCC()).Call(context.TODO(), &pb.Request{Name: "Hobo"})
+				rsp, err := pb.NewExampleClient(cc.GetCC()).Call(context.TODO(), &pb.Request{Name: "Hobo"})
 				if err != nil {
 					t.Fatal(err)
 				}
@@ -129,7 +129,7 @@ func Benchmark_GRPCPool_0(b *testing.B) {
 	defer l.Close()
 
 	s := grpc.NewServer()
-	pb.RegisterExampleServiceServer(s, &testService{})
+	pb.RegisterExampleServer(s, &testService{})
 
 	go s.Serve(l)
 	defer s.Stop()
@@ -155,7 +155,7 @@ func Benchmark_GRPCPool_5(b *testing.B) {
 	defer l.Close()
 
 	s := grpc.NewServer()
-	pb.RegisterExampleServiceServer(s, &testService{})
+	pb.RegisterExampleServer(s, &testService{})
 
 	go s.Serve(l)
 	defer s.Stop()
